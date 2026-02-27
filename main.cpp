@@ -1,7 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
 using namespace std;
+
+const string APPLIANCE_FILE = "appliances.txt";
 
 struct Appliance {
     string name;
@@ -12,6 +15,7 @@ struct Appliance {
 vector<Appliance> appliances;
 
 void registerAppliance() {
+
     Appliance a;
 
     cout << "Enter appliance name: ";
@@ -24,6 +28,8 @@ void registerAppliance() {
     cin >> a.hours;
 
     appliances.push_back(a);
+
+    cout << "Appliance added successfully.\n";
 }
 
 void viewAppliances() {
@@ -76,11 +82,26 @@ void calculateBilling() {
     cout << "Total Cost: " << cost << endl;
 }
 
+void saveAppliances() {
+
+    ofstream file(APPLIANCE_FILE);
+
+    for (int i = 0; i < appliances.size(); i++) {
+
+        file << appliances[i].name << " "
+             << appliances[i].power << " "
+             << appliances[i].hours << endl;
+    }
+
+    file.close();
+}
+
 int main() {
 
     int choice;
 
     do {
+
         cout << "\n===== SMART ENERGY SYSTEM =====\n";
         cout << "1. Register Appliance\n";
         cout << "2. View Appliances\n";
@@ -111,7 +132,8 @@ int main() {
             break;
 
         case 5:
-            cout << "Goodbye\n";
+            saveAppliances();
+            cout << "Data saved. Goodbye.\n";
             break;
 
         default:
