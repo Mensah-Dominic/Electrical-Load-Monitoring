@@ -1,109 +1,103 @@
 #include <iostream>
-#include <string>
+#include <vector>
+#include <iomanip>
 using namespace std;
 
-class Appliance {
-private:
+struct Appliance {
     string name;
-    double powerRating;
-    double usageHours;
-
-public:
-    Appliance() {
-        name = "";
-        powerRating = 0;
-        usageHours = 0;
-    }
-
-    void setAppliance(string n, double p, double u) {
-        name = n;
-        powerRating = p;
-        usageHours = u;
-    }
-
-    string getName() {
-        return name;
-    }
-
-    double getPower() {
-        return powerRating;
-    }
-
-    double getUsage() {
-        return usageHours;
-    }
-
-    double calculateEnergy() {
-        return (powerRating * usageHours) / 1000.0;
-    }
+    float power;
+    float hours;
 };
+
+vector<Appliance> appliances;
+
+void registerAppliance() {
+    Appliance a;
+
+    cout << "Enter appliance name: ";
+    cin >> a.name;
+
+    cout << "Enter power (W): ";
+    cin >> a.power;
+
+    cout << "Enter hours/day: ";
+    cin >> a.hours;
+
+    appliances.push_back(a);
+}
+
+void viewAppliances() {
+
+    if (appliances.size() == 0) {
+        cout << "No appliances available.\n";
+        return;
+    }
+
+    cout << left << setw(15) << "Name"
+         << setw(12) << "Power"
+         << setw(12) << "Hours"
+         << setw(12) << "Energy(kWh)" << endl;
+
+    for (int i = 0; i < appliances.size(); i++) {
+
+        float energy = (appliances[i].power * appliances[i].hours) / 1000;
+
+        cout << left << setw(15) << appliances[i].name
+             << setw(12) << appliances[i].power
+             << setw(12) << appliances[i].hours
+             << setw(12) << energy << endl;
+    }
+}
+
+float calculateTotalEnergy() {
+
+    float total = 0;
+
+    for (int i = 0; i < appliances.size(); i++) {
+        total += (appliances[i].power * appliances[i].hours) / 1000;
+    }
+
+    return total;
+}
 
 int main() {
 
-    Appliance appliances[10];
-    int count = 0;
     int choice;
 
     do {
-        cout << "\n=== Electrical Load Monitoring ===\n";
+        cout << "\n===== SMART ENERGY SYSTEM =====\n";
         cout << "1. Register Appliance\n";
         cout << "2. View Appliances\n";
-        cout << "3. Exit\n";
-        cout << "Enter choice: ";
+        cout << "3. Calculate Total Energy\n";
+        cout << "4. Exit\n";
+        cout << "Choice: ";
         cin >> choice;
 
-        switch(choice) {
+        switch (choice) {
 
-            case 1: {
-                if(count >= 10) {
-                    cout << "Storage full!\n";
-                    break;
-                }
+        case 1:
+            registerAppliance();
+            break;
 
-                string name;
-                double power, hours;
+        case 2:
+            viewAppliances();
+            break;
 
-                cout << "Enter appliance name: ";
-                cin >> name;
+        case 3:
+            cout << "Total Energy: "
+                 << calculateTotalEnergy()
+                 << " kWh\n";
+            break;
 
-                cout << "Enter power rating (Watts): ";
-                cin >> power;
+        case 4:
+            cout << "Goodbye\n";
+            break;
 
-                cout << "Enter daily usage hours: ";
-                cin >> hours;
-
-                appliances[count].setAppliance(name, power, hours);
-                count++;
-
-                cout << "Appliance registered successfully!\n";
-                break;
-            }
-
-            case 2: {
-                if(count == 0) {
-                    cout << "No appliances registered.\n";
-                    break;
-                }
-
-                for(int i = 0; i < count; i++) {
-                    cout << "\nAppliance " << i+1 << endl;
-                    cout << "Name: " << appliances[i].getName() << endl;
-                    cout << "Power: " << appliances[i].getPower() << " W" << endl;
-                    cout << "Usage: " << appliances[i].getUsage() << " hrs" << endl;
-                    cout << "Energy: " << appliances[i].calculateEnergy() << " kWh" << endl;
-                }
-                break;
-            }
-
-            case 3:
-                cout << "Exiting program...\n";
-                break;
-
-            default:
-                cout << "Invalid choice!\n";
+        default:
+            cout << "Invalid choice\n";
         }
 
-    } while(choice != 3);
+    } while (choice != 4);
 
     return 0;
 }
