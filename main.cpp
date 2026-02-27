@@ -14,6 +14,26 @@ struct Appliance {
 
 vector<Appliance> appliances;
 
+void loadAppliances() {
+
+    ifstream file(APPLIANCE_FILE);
+
+    string name;
+    float power, hours;
+
+    while (file >> name >> power >> hours) {
+
+        Appliance a;
+        a.name = name;
+        a.power = power;
+        a.hours = hours;
+
+        appliances.push_back(a);
+    }
+
+    file.close();
+}
+
 void registerAppliance() {
 
     Appliance a;
@@ -97,6 +117,8 @@ void saveAppliances() {
 }
 
 int main() {
+
+    loadAppliances();   // NEW
 
     int choice;
 
