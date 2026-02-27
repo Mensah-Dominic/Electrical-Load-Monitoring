@@ -5,6 +5,7 @@
 using namespace std;
 
 const string APPLIANCE_FILE = "appliances.txt";
+const string BILLING_FILE   = "billing_summary.txt";
 
 struct Appliance {
     string name;
@@ -100,6 +101,17 @@ void calculateBilling() {
     cout << "Total Energy: " << totalEnergy << " kWh\n";
     cout << "Tariff: " << tariff << endl;
     cout << "Total Cost: " << cost << endl;
+
+    // NEW: Save billing summary
+    ofstream billFile(BILLING_FILE, ios::app);
+
+    billFile << "Total Energy: " << totalEnergy
+             << " | Tariff: " << tariff
+             << " | Total Cost: " << cost << endl;
+
+    billFile.close();
+
+    cout << "Billing summary saved to file.\n";
 }
 
 void saveAppliances() {
@@ -118,7 +130,7 @@ void saveAppliances() {
 
 int main() {
 
-    loadAppliances();   // NEW
+    loadAppliances();
 
     int choice;
 
