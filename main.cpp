@@ -1,20 +1,27 @@
 #include <iostream>
-#include <vector>
-#include <iomanip>
 #include <fstream>
+#include <iomanip>
+#include <vector>
+
 using namespace std;
 
+// File names
 const string APPLIANCE_FILE = "appliances.txt";
 const string BILLING_FILE   = "billing_summary.txt";
 
+// Structure
 struct Appliance {
     string name;
     float power;
     float hours;
 };
 
+// Global list
 vector<Appliance> appliances;
 
+
+// Load appliances from file
+// ---------------------------
 void loadAppliances() {
 
     ifstream file(APPLIANCE_FILE);
@@ -23,18 +30,37 @@ void loadAppliances() {
     float power, hours;
 
     while (file >> name >> power >> hours) {
-
         Appliance a;
         a.name = name;
         a.power = power;
         a.hours = hours;
-
         appliances.push_back(a);
     }
 
     file.close();
 }
 
+
+// ---------------------------
+// Save appliances to file
+// ---------------------------
+void saveAppliances() {
+
+    ofstream file(APPLIANCE_FILE);
+
+    for (int i = 0; i < appliances.size(); i++) {
+        file << appliances[i].name << " "
+             << appliances[i].power << " "
+             << appliances[i].hours << endl;
+    }
+
+    file.close();
+}
+
+
+// ---------------------------
+// Register appliance
+// ---------------------------
 void registerAppliance() {
 
     Appliance a;
@@ -42,17 +68,21 @@ void registerAppliance() {
     cout << "Enter appliance name: ";
     cin >> a.name;
 
-    cout << "Enter power (W): ";
+    cout << "Enter power rating (W): ";
     cin >> a.power;
 
-    cout << "Enter hours/day: ";
+    cout << "Enter usage hours per day: ";
     cin >> a.hours;
 
     appliances.push_back(a);
 
-    cout << "Appliance added successfully.\n";
+    cout << "Appliance registered successfully.\n";
 }
 
+
+// ---------------------------
+// View appliances
+// ---------------------------
 void viewAppliances() {
 
     if (appliances.size() == 0) {
@@ -60,8 +90,9 @@ void viewAppliances() {
         return;
     }
 
+    cout << "\nAppliance List\n";
     cout << left << setw(15) << "Name"
-         << setw(12) << "Power"
+         << setw(12) << "Power(W)"
          << setw(12) << "Hours"
          << setw(12) << "Energy(kWh)" << endl;
 
@@ -76,17 +107,26 @@ void viewAppliances() {
     }
 }
 
+
+// ---------------------------
+// Calculate total energy
+// ---------------------------
 float calculateTotalEnergy() {
 
     float total = 0;
 
     for (int i = 0; i < appliances.size(); i++) {
-        total += (appliances[i].power * appliances[i].hours) / 1000;
+        total = total + 
+        (appliances[i].power * appliances[i].hours) / 1000;
     }
 
     return total;
 }
 
+
+// ---------------------------
+// Calculate billing + Save summary
+// ---------------------------
 void calculateBilling() {
 
     float tariff;
@@ -95,39 +135,29 @@ void calculateBilling() {
     cin >> tariff;
 
     float totalEnergy = calculateTotalEnergy();
-    float cost = totalEnergy * tariff;
+    float totalCost = totalEnergy * tariff;
 
     cout << "\n===== BILLING SUMMARY =====\n";
     cout << "Total Energy: " << totalEnergy << " kWh\n";
     cout << "Tariff: " << tariff << endl;
-    cout << "Total Cost: " << cost << endl;
+    cout << "Total Cost: " << totalCost << endl;
 
-    // NEW: Save billing summary
+    // Save to billing_summary.txt
     ofstream billFile(BILLING_FILE, ios::app);
 
-    billFile << "Total Energy: " << totalEnergy
-             << " | Tariff: " << tariff
-             << " | Total Cost: " << cost << endl;
+    billFile << "Total Energy: " << totalEnergy << " kWh | ";
+    billFile << "Tariff: " << tariff << " | ";
+    billFile << "Total Cost: " << totalCost << endl;
 
     billFile.close();
 
     cout << "Billing summary saved to file.\n";
 }
 
-void saveAppliances() {
 
-    ofstream file(APPLIANCE_FILE);
-
-    for (int i = 0; i < appliances.size(); i++) {
-
-        file << appliances[i].name << " "
-             << appliances[i].power << " "
-             << appliances[i].hours << endl;
-    }
-
-    file.close();
-}
-
+// ---------------------------
+// Main
+// ---------------------------
 int main() {
 
     loadAppliances();
@@ -171,7 +201,7 @@ int main() {
             break;
 
         default:
-            cout << "Invalid choice\n";
+            cout << "Invalid choice.\n";
         }
 
     } while (choice != 5);
